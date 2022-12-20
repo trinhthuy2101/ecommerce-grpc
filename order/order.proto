@@ -1,0 +1,71 @@
+syntax = "proto3";
+
+import "google/api/annotations.proto";
+
+option go_package = "github.com/uchin-mentorship/ecommerce-go/order";
+
+
+service OrderService {
+  rpc CreateOrder(BaseOrder) returns (CreateOrderResponse) {
+    option (google.api.http) = {
+      post: "/v1/orders",
+      body: "*"
+    };
+  }
+  rpc GetOrders(GetOrdersRequest) returns (GetOrdersResponse) {
+    option (google.api.http) = {
+      get: "/v1/orders"
+    };
+  }
+  rpc GetOrderByID(GetOrderByIDRequest) returns (BaseOrder) {
+    option (google.api.http) = {
+      get: "/v1/orders/{id}"
+    };
+  }
+}
+
+message Product {
+  string id = 1;
+  string name = 2;
+  uint32 quantity = 3;
+}
+
+message BaseOrder {
+  int32 order_id = 1;
+  string order_code = 2;
+  string customer_id = 3;
+  uint32 quantity = 4;
+  repeated Product items = 5;
+  int32 total_amount = 6;
+  int32 discount_amount = 7;
+  int32 shipping_address_id = 8;
+  int32 billing_address_id = 9;
+}
+
+message CreateOrderResponse {
+  bool is_success = 1;
+  int32 order_id = 2;
+}
+
+message GetOrdersRequest {
+  int32 order_id = 1;
+  string order_code = 2;
+  string customer_id = 3;
+  int32 page = 4;
+  int32 limit = 5;
+}
+
+message GetOrdersResponse {
+  repeated BaseOrder orders = 1;
+  Pagination pagination = 2;
+}
+
+message GetOrderByIDRequest {
+  int32 id = 1;
+}
+
+message Pagination {
+  int32 total_count = 1;
+  int32 current_page = 2;
+  int32 page_size = 3;
+}

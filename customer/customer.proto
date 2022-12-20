@@ -1,0 +1,65 @@
+syntax = "proto3";
+import "google/api/annotations.proto";
+
+option go_package = "github.com/uchin-mentorship/ecommerce-go/customer";
+
+service CustomerService {
+  rpc Create(BaseCustomer) returns (CreateCustomerResponse) {
+    option (google.api.http) = {
+      post: "/v1/customers",
+      body: "*"
+    };
+  }
+  rpc Collection(Empty) returns (CollectionResponse) {
+    option (google.api.http) = {
+      get: "/v1/customers"
+    };
+  }
+  
+  rpc GetByID(GetByIDRequest) returns (BaseCustomer) {
+    option (google.api.http) = {
+      get: "/v1/customers/{id}"
+    };
+  }
+}
+
+message Empty {}
+
+message Pagination {
+  int64 totalRecords = 1;
+  int64 totalPages = 2;
+  int64 pageSize = 3;
+  int64 currentPage = 4;
+
+}
+
+message BaseCustomer {
+  int64 id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string gender = 4;
+  string email = 5;
+  string createdAt = 6;
+  string updatedAt = 7;
+}
+
+message CreateCustomerResponse {
+  int32 status = 1;
+  string message = 2;
+  string traceId = 3;
+}
+
+message CollectionResponse {
+  message Data {
+    repeated BaseCustomer results = 1;
+    Pagination pagination = 2;
+  }
+  int32 status = 1;
+  string message = 2;
+  string traceId = 3;
+  Data data = 4;
+}
+
+message GetByIDRequest {
+  int64 id = 1;
+}
